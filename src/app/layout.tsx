@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { QuantPulseLogo } from '@/components/icons/quant-pulse-logo';
 import { UserDropdown } from '@/components/shared/user-dropdown';
-import { NavLinks } from '@/components/shared/nav-links'; // Import NavLinks from its new location
+import { NavLinks } from '@/components/shared/nav-links';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -46,11 +46,13 @@ export default function RootLayout({
         <SidebarProvider defaultOpen>
           <Sidebar collapsible="icon" variant="sidebar" className="border-r border-sidebar-border">
             <SidebarHeader className="p-4">
-              <Link href="/" className="flex items-center gap-2" aria-label="QuantPulse Home">
-                <QuantPulseLogo className="h-8 w-8 text-sidebar-primary" />
-                <span className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-                  QuantPulse
-                </span>
+              <Link href="/" aria-label="QuantPulse Home">
+                <div className="flex items-center gap-2">
+                  <QuantPulseLogo className="h-8 w-8 text-sidebar-primary" />
+                  <span className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+                    QuantPulse
+                  </span>
+                </div>
               </Link>
             </SidebarHeader>
             <SidebarContent className="p-2">
@@ -61,16 +63,18 @@ export default function RootLayout({
                  <UserDropdown />
                </div>
                <div className="hidden group-data-[collapsible=icon]:block">
-                  <UserDropdown /> {/* Simplified for icon-only mode or custom display */}
+                  <UserDropdown />
                </div>
             </SidebarFooter>
           </Sidebar>
           <SidebarInset>
             <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6 md:hidden">
               <SidebarTrigger className="text-foreground"/>
-              <Link href="/" className="flex items-center gap-2 font-semibold" aria-label="QuantPulse Home">
-                <QuantPulseLogo className="h-6 w-6 text-primary" />
-                <span className="sr-only">QuantPulse</span>
+              <Link href="/" aria-label="QuantPulse Home">
+                <div className="flex items-center gap-2 font-semibold">
+                  <QuantPulseLogo className="h-6 w-6 text-primary" />
+                  <span className="sr-only">QuantPulse</span>
+                </div>
               </Link>
               {/* Mobile header actions can go here if needed */}
             </header>

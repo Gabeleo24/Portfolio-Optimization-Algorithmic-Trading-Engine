@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { PageTitle } from "@/components/page-title";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -72,7 +72,7 @@ const TradingViewWidget = () => {
 
   return (
     <>
-      <div id="tradingview_widget_symbol_overview" className="h-[500px] w-full"></div>
+      <div id="tradingview_widget_symbol_overview" className="h-[700px] w-full"></div>
       <p className="text-center text-muted-foreground mt-2 text-xs">
         Market data provided by TradingView.
       </p>
@@ -107,40 +107,123 @@ export default function RealTimeDataPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Function to fetch market data
-    const fetchMarketData = async () => {
+  // Function to fetch market data - defined outside useEffect for reusability
+  const fetchMarketData = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // For development testing with a real API
+      const symbols = initialInstruments.map(i => i.ticker).join(',');
+      
       try {
-        setLoading(true);
-        const apiKey = process.env.NEXT_PUBLIC_MARKET_DATA_API_KEY;
-        const response = await fetch(`https://your-chosen-api.com/market-data?apikey=${apiKey}`);
+        // Using Alpha Vantage API as an example (you'll need to sign up for a free API key)
+        const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || 'demo';
+        const endpoint = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbols=${symbols}&apikey=${apiKey}`;
+        
+        console.log('Fetching data from:', endpoint);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const response = await fetch(endpoint, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+        
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch market data');
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
         }
         
         const data = await response.json();
-        const formattedData = transformMarketData(data);
-        setInstruments(formattedData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching market data:', err);
-        setError('Unable to load market data. Using sample data instead.');
-        // Fall back to sample data
-        setInstruments(initialInstruments);
-      } finally {
-        setLoading(false);
+        console.log('API response:', data);
+        
+        // Process the API response
+        if (data && !data.Note) { // Alpha Vantage returns a Note property when rate limited
+          // Transform the API response to our format
+          const updatedInstruments = processAlphaVantageData(data, initialInstruments);
+          setInstruments(updatedInstruments);
+          setError(null);
+        } else if (data.Note) {
+          // Handle API rate limiting
+          console.warn('API rate limit reached:', data.Note);
+          throw new Error('API rate limit reached. Using sample data instead.');
+        } else {
+          throw new Error('Invalid API response format');
+        }
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        setError(`${apiError.message}. Using sample data.`);
+        
+        // Use sample data with slight random variations to simulate real-time changes
+        const randomizedData = initialInstruments.map(instrument => {
+          // Add small random price changes to simulate live data
+          const priceChange = (Math.random() * 2 - 1) * (instrument.price * 0.005); // ±0.5% change
+          const newPrice = instrument.price + priceChange;
+          const changeValue = parseFloat(instrument.change.replace(/[+\-$]/g, '')) + priceChange;
+          const percentChange = (changeValue / (newPrice - changeValue)) * 100;
+          
+          return {
+            ...instrument,
+            price: newPrice,
+            change: `${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}`,
+            changePercent: `${priceChange >= 0 ? '+' : ''}${percentChange.toFixed(2)}%`,
+          };
+        });
+        
+        setInstruments(randomizedData);
       }
-    };
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred. Using sample data.');
+      setInstruments(initialInstruments);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // Add this function to process Alpha Vantage data
+  const processAlphaVantageData = (apiData, baseInstruments) => {
+    const result = [...baseInstruments];
+    
+    // Alpha Vantage returns data in a specific format we need to parse
+    Object.keys(apiData).forEach(key => {
+      if (key.includes('Global Quote')) {
+        const quote = apiData[key];
+        const symbol = quote['01. symbol'];
+        
+        // Find the matching instrument in our data
+        const instrumentIndex = result.findIndex(i => i.ticker === symbol);
+        if (instrumentIndex >= 0) {
+          const price = parseFloat(quote['05. price']);
+          const change = parseFloat(quote['09. change']);
+          const changePercent = parseFloat(quote['10. change percent'].replace('%', ''));
+          
+          result[instrumentIndex] = {
+            ...result[instrumentIndex],
+            price: price,
+            change: `${change >= 0 ? '+' : ''}${change.toFixed(2)}`,
+            changePercent: `${change >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`,
+          };
+        }
+      }
+    });
+    
+    return result;
+  };
+
+  useEffect(() => {
     // Initial fetch
     fetchMarketData();
     
-    // Set up polling interval
-    const interval = setInterval(fetchMarketData, 60000); // Update every minute
+    // Set up polling interval - more frequent for a real-time feel
+    const interval = setInterval(fetchMarketData, 10000); // Update every 10 seconds
     
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchMarketData]);
 
   // Transform API response to our instrument format
   const transformApiData = (apiData: any): Instrument[] => {
@@ -154,13 +237,11 @@ export default function RealTimeDataPage() {
   return (
     <>
       <Script src="https://s3.tradingview.com/tv.js" strategy="afterInteractive" />
-      
       <PageTitle
         title="Real-Time Market Data & Insights"
         description="Monitor live financial instrument data, track price movements, analyze trading volumes, and view simulated AI-driven market insights."
         actions={<Button variant="outline"><Settings2 className="mr-2 h-4 w-4" />Configure Data Feeds</Button>}
       />
-      
       <Card className="mb-6 shadow-lg">
         <CardHeader>
           <CardTitle>Market Overview Chart</CardTitle>
@@ -172,7 +253,6 @@ export default function RealTimeDataPage() {
           </div>
         </CardContent>
       </Card>
-
       <Card className="mb-6 shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -197,7 +277,6 @@ export default function RealTimeDataPage() {
           </div>
         </CardContent>
       </Card>
-
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -233,7 +312,7 @@ export default function RealTimeDataPage() {
             <TableBody>
               {loading ? (
                 // Show loading skeletons
-                Array(5).fill(0).map((_, index) => (
+                (Array(5).fill(0).map((_, index) => (
                   <TableRow key={`loading-${index}`}>
                     <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-40" /></TableCell>
@@ -244,7 +323,7 @@ export default function RealTimeDataPage() {
                     <TableCell className="text-right"><Skeleton className="h-4 w-20 ml-auto" /></TableCell>
                     <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                   </TableRow>
-                ))
+                )))
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-4">

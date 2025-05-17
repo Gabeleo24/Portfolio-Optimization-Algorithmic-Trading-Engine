@@ -21,9 +21,14 @@ export function NavLinks() {
             isActive={pathname === item.href}
             tooltip={{ children: item.label, className: "bg-primary text-primary-foreground" }}
           >
-            <Link href={item.href} className="flex items-center gap-2">
-              <item.icon />
-              <span>{item.label}</span>
+            <Link 
+              href={item.href} 
+              className="flex items-center gap-2"
+            >
+              <span className="flex items-center gap-2">
+                <item.icon />
+                {item.label}
+              </span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

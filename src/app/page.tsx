@@ -57,7 +57,6 @@ export default function DashboardPage() {
         imageSrc="https://placehold.co/320x400/1F2937/E5E7EB?text=QuantPulse"
         imageAlt="QuantPulse Platform"
       />
-      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
           <Card key={feature.title} className="flex flex-col overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
@@ -80,14 +79,15 @@ export default function DashboardPage() {
             <CardContent className="mt-auto">
               <Button asChild variant="outline" className="w-full">
                 <Link href={feature.link}>
-                  Explore Feature <ArrowRight className="ml-2 h-4 w-4" />
+                  <span className="flex items-center justify-center">
+                    Explore Feature <ArrowRight className="ml-2 h-4 w-4" />
+                  </span>
                 </Link>
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
-      
       <Card className="mt-8 shadow-lg">
         <CardHeader>
           <CardTitle>Portfolio Overview</CardTitle>
