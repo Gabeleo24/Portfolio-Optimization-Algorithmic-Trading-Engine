@@ -14,11 +14,15 @@ export const metadata: Metadata = {
 };
 
 const sampleInstruments = [
-  { ticker: "AAPL", name: "Apple Inc.", price: 170.34, change: "+1.25", changePercent: "+0.74%", volume: "75M", market: "NASDAQ" },
-  { ticker: "MSFT", name: "Microsoft Corp.", price: 420.72, change: "-0.50", changePercent: "-0.12%", volume: "22M", market: "NASDAQ" },
-  { ticker: "GOOGL", name: "Alphabet Inc.", price: 150.10, change: "+2.80", changePercent: "+1.90%", volume: "30M", market: "NASDAQ" },
-  { ticker: "AMZN", name: "Amazon.com Inc.", price: 180.55, change: "+0.15", changePercent: "+0.08%", volume: "45M", market: "NASDAQ" },
-  { ticker: "BTC/USD", name: "Bitcoin", price: 65030.00, change: "+1200.00", changePercent: "+1.88%", volume: "35K", market: "Crypto" },
+  { ticker: "AAPL", name: "Apple Inc.", price: 172.50, change: "+2.15", changePercent: "+1.26%", volume: "68M", market: "NASDAQ" },
+  { ticker: "MSFT", name: "Microsoft Corp.", price: 418.90, change: "-1.30", changePercent: "-0.31%", volume: "25M", market: "NASDAQ" },
+  { ticker: "GOOGL", name: "Alphabet Inc. C", price: 155.60, change: "+0.45", changePercent: "+0.29%", volume: "28M", market: "NASDAQ" },
+  { ticker: "AMZN", name: "Amazon.com Inc.", price: 182.10, change: "-0.95", changePercent: "-0.52%", volume: "50M", market: "NASDAQ" },
+  { ticker: "TSLA", name: "Tesla, Inc.", price: 175.80, change: "+3.50", changePercent: "+2.03%", volume: "95M", market: "NASDAQ" },
+  { ticker: "NVDA", name: "NVIDIA Corporation", price: 903.50, change: "+12.75", changePercent: "+1.43%", volume: "45M", market: "NASDAQ" },
+  { ticker: "SPY", name: "SPDR S&P 500 ETF", price: 510.20, change: "+1.80", changePercent: "+0.35%", volume: "85M", market: "ARCA" },
+  { ticker: "BTC/USD", name: "Bitcoin", price: 67250.00, change: "-850.00", changePercent: "-1.25%", volume: "42K", market: "Crypto" },
+  { ticker: "ETH/USD", name: "Ethereum", price: 3480.00, change: "+55.00", changePercent: "+1.60%", volume: "1.2M", market: "Crypto" },
 ];
 
 export default function RealTimeDataPage() {

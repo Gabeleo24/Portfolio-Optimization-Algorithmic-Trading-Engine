@@ -90,15 +90,15 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-4 text-center md:grid-cols-3">
             <div>
               <p className="text-sm text-muted-foreground">Total Value</p>
-              <p className="text-2xl font-semibold text-primary">$1,234,567.89</p>
+              <p className="text-2xl font-semibold text-primary">$1,567,890.12</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Day's Gain/Loss</p>
-              <p className="text-2xl font-semibold text-accent-foreground">+$10,234.56</p>
+              <p className="text-2xl font-semibold text-destructive">-$5,123.45</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Overall Return</p>
-              <p className="text-2xl font-semibold text-accent-foreground">+15.75%</p>
+              <p className="text-2xl font-semibold text-accent-foreground">+23.50%</p>
             </div>
           </div>
           <div className="mt-6 h-64 w-full rounded-lg bg-muted flex items-center justify-center">
