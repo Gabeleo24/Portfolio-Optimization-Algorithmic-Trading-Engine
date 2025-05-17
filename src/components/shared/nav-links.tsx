@@ -16,18 +16,16 @@ export function NavLinks() {
     <SidebarMenu>
       {navItems.map((item: NavItem) => (
         <SidebarMenuItem key={item.label}>
-          <Link href={item.href} legacyBehavior passHref>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === item.href}
-              tooltip={{ children: item.label, className: "bg-primary text-primary-foreground" }}
-            >
-              <a>
-                <item.icon />
-                <span>{item.label}</span>
-              </a>
-            </SidebarMenuButton>
-          </Link>
+          <SidebarMenuButton
+            asChild
+            isActive={pathname === item.href}
+            tooltip={{ children: item.label, className: "bg-primary text-primary-foreground" }}
+          >
+            <Link href={item.href} className="flex items-center gap-2">
+              <item.icon />
+              <span>{item.label}</span>
+            </Link>
+          </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>

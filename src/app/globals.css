@@ -8,96 +8,98 @@ body {
 
 @layer base {
   :root {
-    --background: 220 29% 95%; /* #F0F2F5 */
-    --foreground: 220 10% 25%; /* Darker gray for text on light gray bg */
+    /* Updated color scheme inspired by Samay's site */
+    --background: 222 47% 11%; /* #111827 dark background */
+    --foreground: 220 13% 91%; /* #E5E7EB light text */
     
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 220 10% 25%;
+    --card: 215 28% 17%; /* #1F2937 card background */
+    --card-foreground: 220 13% 91%; /* #E5E7EB light text */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 10% 25%;
+    --popover: 215 28% 17%;
+    --popover-foreground: 220 13% 91%;
 
-    --primary: 221 44% 41%; /* #3B5998 */
-    --primary-foreground: 210 40% 98%; /* Off-white for primary text */
+    --primary: 271 98% 62%; /* #8A3FFC brand purple */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
 
-    --secondary: 220 15% 90%; /* Lighter gray for secondary elements */
-    --secondary-foreground: 220 10% 20%;
+    --secondary: 217 19% 27%; /* Darker variant of card bg */
+    --secondary-foreground: 220 13% 91%;
 
-    --muted: 220 15% 85%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 215 28% 25%;
+    --muted-foreground: 220 9% 65%; /* #9CA3AF medium text */
 
-    --accent: 120 25% 65%; /* #8FBC8F */
-    --accent-foreground: 120 25% 15%; /* Dark green for text on accent */
+    --accent: 187 83% 53%; /* #22D3EE accent cyan */
+    --accent-foreground: 222 47% 11%; /* Dark text on accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 92%;
-    --ring: 221 44% 50%; 
+    --border: 215 28% 25%;
+    --input: 215 28% 20%;
+    --ring: 271 98% 62%; 
 
     --radius: 0.5rem;
 
-    --sidebar-background: 221 44% 35%; /* Slightly darker primary */
-    --sidebar-foreground: 0 0% 98%; /* White text */
-    --sidebar-primary: 0 0% 100%; /* White for active item text (foreground) */
-    --sidebar-primary-foreground: 221 44% 25%; /* Dark blue for active item background/icon (background of active item) */
-    --sidebar-accent: 221 44% 41%; /* Primary color for hover */
-    --sidebar-accent-foreground: 0 0% 98%; /* White text on hover */
-    --sidebar-border: 221 44% 30%;
-    --sidebar-ring: 0 0% 100%;
+    --sidebar-background: 222 47% 8%; /* Darker than background */
+    --sidebar-foreground: 220 13% 91%; /* Light text */
+    --sidebar-primary: 271 98% 62%; /* Brand purple */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text */
+    --sidebar-accent: 215 28% 17%; /* Card bg color */
+    --sidebar-accent-foreground: 220 13% 91%; /* Light text */
+    --sidebar-border: 222 47% 15%;
+    --sidebar-ring: 271 98% 62%;
 
-    /* Chart colors remain as default from shadcn for now */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    /* Chart colors */
+    --chart-1: 271 98% 62%; /* Brand purple */
+    --chart-2: 187 83% 53%; /* Accent cyan */
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
   }
 
   .dark {
-    --background: 220 10% 10%; 
-    --foreground: 220 20% 90%; 
+    /* Dark mode is already dark, so we'll keep these values */
+    --background: 222 47% 11%;
+    --foreground: 220 13% 91%;
 
-    --card: 220 10% 15%;
-    --card-foreground: 220 20% 90%;
+    --card: 215 28% 17%;
+    --card-foreground: 220 13% 91%;
 
-    --popover: 220 10% 15%;
-    --popover-foreground: 220 20% 90%;
+    --popover: 215 28% 17%;
+    --popover-foreground: 220 13% 91%;
 
-    --primary: 221 44% 55%; 
-    --primary-foreground: 220 10% 10%; 
+    --primary: 271 98% 62%;
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 220 10% 20%;
-    --secondary-foreground: 220 20% 90%;
+    --secondary: 217 19% 27%;
+    --secondary-foreground: 220 13% 91%;
 
-    --muted: 220 10% 25%;
-    --muted-foreground: 220 10% 60%;
+    --muted: 215 28% 25%;
+    --muted-foreground: 220 9% 65%;
 
-    --accent: 120 25% 55%; 
-    --accent-foreground: 120 25% 95%; 
+    --accent: 187 83% 53%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 10% 25%;
-    --input: 220 10% 20%;
-    --ring: 221 44% 60%;
+    --border: 215 28% 25%;
+    --input: 215 28% 20%;
+    --ring: 271 98% 62%;
 
-    --sidebar-background: 220 10% 5%; 
-    --sidebar-foreground: 220 20% 80%;
-    --sidebar-primary: 120 25% 55%; 
-    --sidebar-primary-foreground: 120 25% 95%;
-    --sidebar-accent: 220 10% 15%;
-    --sidebar-accent-foreground: 220 20% 85%;
-    --sidebar-border: 220 10% 12%;
-    --sidebar-ring: 120 25% 60%;
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 220 13% 91%;
+    --sidebar-primary: 271 98% 62%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 220 13% 91%;
+    --sidebar-border: 222 47% 15%;
+    --sidebar-ring: 271 98% 62%;
 
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 271 98% 62%;
+    --chart-2: 187 83% 53%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 }
 
@@ -110,4 +112,23 @@ body {
     min-height: 100vh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+}
+
+/* Add custom styles from Samay's site */
+.hero-name-display h1 {
+  line-height: 0.9; 
+}
+
+/* Add blur effect for background elements */
+.backdrop-blur-custom {
+  backdrop-filter: blur(8px);
+}
+
+/* Add glow effects for accent elements */
+.glow-accent {
+  box-shadow: 0 0 15px 2px hsl(var(--accent) / 0.3);
+}
+
+.glow-primary {
+  box-shadow: 0 0 15px 2px hsl(var(--primary) / 0.3);
 }

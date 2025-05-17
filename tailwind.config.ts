@@ -9,6 +9,20 @@ export default {
   ],
   theme: {
   	extend: {
+  		fontSize: {
+  			'8xl': '6rem',
+  			'9xl': '7.5rem',
+  			'10xl': '9rem',
+  		},
+  		letterSpacing: {
+  			'tighter-xl': '-0.05em',
+  		},
+  		opacity: {
+  			'05': '0.05',
+  		},
+  		backdropBlur: {
+  			'xs': '2px',
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

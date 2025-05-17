@@ -8,14 +8,77 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { LineChart, Search, Settings2, Zap, Brain } from "lucide-react";
+import { LineChart, Search, Settings2, Zap, Brain, AlertCircle } from "lucide-react";
 import Image from "next/image";
-// Note: Metadata is typically defined in Server Components or page.js/layout.js for App Router.
-// Since this is now a client component, metadata should be handled in a parent Server Component or layout if needed.
-// export const metadata: Metadata = {
-// title: 'Real-Time Data',
-// description: 'Access and monitor real-time financial market data.',
-// };
+import { Skeleton } from "@/components/ui/skeleton";
+import { transformMarketData } from "@/lib/market-data";
+import Script from "next/script";
+
+// Define instrument type
+interface Instrument {
+  id: string;
+  ticker: string;
+  name: string;
+  price: number;
+  change: string;
+  changePercent: string;
+  volume: string;
+  market: string;
+}
+
+// TradingView Widget Component
+const TradingViewWidget = () => {
+  useEffect(() => {
+    // Create TradingView widget when component mounts
+    const script = document.createElement('script');
+    script.innerHTML = `
+      new TradingView.widget({
+        "width": "100%",
+        "height": "100%",
+        "symbol": "NASDAQ:AAPL",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "withdateranges": true,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": true,
+        "details": true,
+        "hotlist": true,
+        "calendar": false,
+        "studies": [
+          "Volume@tv-basicstudies"
+        ],
+        "container_id": "tradingview_widget_symbol_overview"
+      });
+    `;
+    
+    // Only add the script if the container exists and TradingView is loaded
+    const container = document.getElementById('tradingview_widget_symbol_overview');
+    if (container && window.TradingView) {
+      document.body.appendChild(script);
+    }
+    
+    return () => {
+      // Clean up
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
+  return (
+    <>
+      <div id="tradingview_widget_symbol_overview" className="h-[500px] w-full"></div>
+      <p className="text-center text-muted-foreground mt-2 text-xs">
+        Market data provided by TradingView.
+      </p>
+    </>
+  );
+};
 
 const initialInstruments = [
   { id: "sp500", ticker: "^GSPC", name: "S&P 500 Index", price: 5430.80, change: "+22.10", changePercent: "+0.41%", volume: "2.8B", market: "INDEX" },
@@ -40,36 +103,58 @@ const sampleInsights = [
 
 
 export default function RealTimeDataPage() {
-  const [instruments, setInstruments] = useState(initialInstruments);
+  const [instruments, setInstruments] = useState<Instrument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setInstruments(prevInstruments =>
-        prevInstruments.map(inst => {
-          if (inst.id === "sp500" || inst.id === "nasdaq") {
-            const priceChange = (Math.random() - 0.5) * (inst.price * 0.001); // Smaller, more realistic changes
-            const newPrice = parseFloat((inst.price + priceChange).toFixed(2));
-            const changeValue = parseFloat((newPrice - (inst.price - parseFloat(inst.change))).toFixed(2));
-            const changePercentValue = parseFloat(((changeValue / (newPrice - changeValue)) * 100).toFixed(2));
+    // Function to fetch market data
+    const fetchMarketData = async () => {
+      try {
+        setLoading(true);
+        const apiKey = process.env.NEXT_PUBLIC_MARKET_DATA_API_KEY;
+        const response = await fetch(`https://your-chosen-api.com/market-data?apikey=${apiKey}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch market data');
+        }
+        
+        const data = await response.json();
+        const formattedData = transformMarketData(data);
+        setInstruments(formattedData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching market data:', err);
+        setError('Unable to load market data. Using sample data instead.');
+        // Fall back to sample data
+        setInstruments(initialInstruments);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-            return {
-              ...inst,
-              price: newPrice,
-              change: `${changeValue >= 0 ? '+' : ''}${changeValue.toFixed(2)}`,
-              changePercent: `${changePercentValue >= 0 ? '+' : ''}${changePercentValue.toFixed(2)}%`,
-            };
-          }
-          return inst;
-        })
-      );
-    }, 3000); // Update every 3 seconds
-
+    // Initial fetch
+    fetchMarketData();
+    
+    // Set up polling interval
+    const interval = setInterval(fetchMarketData, 60000); // Update every minute
+    
     return () => clearInterval(interval);
   }, []);
 
+  // Transform API response to our instrument format
+  const transformApiData = (apiData: any): Instrument[] => {
+    // This function would transform the API's response format to match our Instrument interface
+    // Implementation depends on the actual API response structure
+    
+    // For now, returning sample data
+    return initialInstruments;
+  };
 
   return (
     <>
+      <Script src="https://s3.tradingview.com/tv.js" strategy="afterInteractive" />
+      
       <PageTitle
         title="Real-Time Market Data & Insights"
         description="Monitor live financial instrument data, track price movements, analyze trading volumes, and view simulated AI-driven market insights."
@@ -79,11 +164,11 @@ export default function RealTimeDataPage() {
       <Card className="mb-6 shadow-lg">
         <CardHeader>
           <CardTitle>Market Overview Chart</CardTitle>
-          <CardDescription>Visual representation of key market indices or selected instruments.</CardDescription>
+          <CardDescription>Interactive chart powered by TradingView</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-80 w-full rounded-lg bg-muted flex items-center justify-center">
-             <Image src="https://placehold.co/800x400.png" alt="Market overview chart showing S&P 500 and NASDAQ trends" width={800} height={400} className="rounded-lg object-cover" data-ai-hint="S&P500 NASDAQ"/>
+          <div className="rounded-lg overflow-hidden">
+            <TradingViewWidget />
           </div>
         </CardContent>
       </Card>
@@ -146,29 +231,54 @@ export default function RealTimeDataPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {instruments.map((instrument) => (
-                <TableRow key={instrument.id}>
-                  <TableCell className="font-medium">{instrument.ticker}</TableCell>
-                  <TableCell>{instrument.name}</TableCell>
-                  <TableCell className="text-right">
-                    ${instrument.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-                    {(instrument.id === "sp500" || instrument.id === "nasdaq") && <Zap className="ml-1 inline-block h-3 w-3 text-primary animate-pulse" />}
-                  </TableCell>
-                  <TableCell className={`text-right ${instrument.change.startsWith('+') ? 'text-accent-foreground' : 'text-destructive'}`}>
-                    {instrument.change}
-                  </TableCell>
-                  <TableCell className={`text-right ${instrument.changePercent.startsWith('+') ? 'text-accent-foreground' : 'text-destructive'}`}>
-                    {instrument.changePercent}
-                  </TableCell>
-                  <TableCell className="text-right">{instrument.volume}</TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant={instrument.market === "Crypto" || instrument.market === "INDEX" ? "secondary" : "outline"}>{instrument.market}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">Details</Button>
+              {loading ? (
+                // Show loading skeletons
+                Array(5).fill(0).map((_, index) => (
+                  <TableRow key={`loading-${index}`}>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-24 ml-auto" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-20 ml-auto" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
+                  </TableRow>
+                ))
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-4">
+                    <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                      <AlertCircle className="h-4 w-4" />
+                      {error}
+                    </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                instruments.map((instrument) => (
+                  <TableRow key={instrument.id}>
+                    <TableCell className="font-medium">{instrument.ticker}</TableCell>
+                    <TableCell>{instrument.name}</TableCell>
+                    <TableCell className="text-right">
+                      ${instrument.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                      {(instrument.id === "sp500" || instrument.id === "nasdaq") && <Zap className="ml-1 inline-block h-3 w-3 text-primary animate-pulse" />}
+                    </TableCell>
+                    <TableCell className={`text-right ${instrument.change.startsWith('+') ? 'text-accent-foreground' : 'text-destructive'}`}>
+                      {instrument.change}
+                    </TableCell>
+                    <TableCell className={`text-right ${instrument.changePercent.startsWith('+') ? 'text-accent-foreground' : 'text-destructive'}`}>
+                      {instrument.changePercent}
+                    </TableCell>
+                    <TableCell className="text-right">{instrument.volume}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant={instrument.market === "Crypto" || instrument.market === "INDEX" ? "secondary" : "outline"}>{instrument.market}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">Details</Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
           <div className="mt-6 flex justify-end">

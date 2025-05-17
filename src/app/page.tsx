@@ -1,3 +1,4 @@
+import { HeroSection } from '@/components/shared/hero-section';
 import { PageTitle } from '@/components/page-title';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,10 +49,15 @@ const features: FeatureInfo[] = [
 export default function DashboardPage() {
   return (
     <>
-      <PageTitle
-        title="Welcome to QuantPulse"
-        description="Your comprehensive financial modeling and algorithmic trading engine."
+      <HeroSection
+        title="QuantPulse"
+        subtitle="FINANCIAL ANALYTICS ENGINE"
+        description="Your comprehensive platform for financial modeling, algorithmic trading, and portfolio optimization. Leverage AI-powered insights to make data-driven investment decisions."
+        ctaText="EXPLORE FEATURES"
+        imageSrc="https://placehold.co/320x400/1F2937/E5E7EB?text=QuantPulse"
+        imageAlt="QuantPulse Platform"
       />
+      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
           <Card key={feature.title} className="flex flex-col overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
@@ -81,7 +87,8 @@ export default function DashboardPage() {
           </Card>
         ))}
       </div>
-       <Card className="mt-8 shadow-lg">
+      
+      <Card className="mt-8 shadow-lg">
         <CardHeader>
           <CardTitle>Portfolio Overview</CardTitle>
           <CardDescription>A snapshot of your current portfolio performance and key metrics.</CardDescription>
