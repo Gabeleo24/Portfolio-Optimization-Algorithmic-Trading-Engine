@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { useActionState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getAiChartSuggestions, type FormState } from "@/lib/actions";
-import { useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Bot, Lightbulb, ListChecks, Terminal, FileText } from "lucide-react";
 
@@ -35,7 +35,7 @@ function SubmitButton() {
 }
 
 export function AiVisualizationsForm() {
-  const [state, formAction] = useFormState(getAiChartSuggestions, initialState);
+  const [state, formAction] = useActionState(getAiChartSuggestions, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
