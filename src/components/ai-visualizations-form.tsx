@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
@@ -8,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getAiChartSuggestions, type FormState } from "@/lib/actions";
 import { useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Bot, Lightbulb, ListChecks, Terminal } from "lucide-react";
+import { Bot, Lightbulb, ListChecks, Terminal, FileText } from "lucide-react";
 
 const initialState: FormState = {
   message: "",
@@ -21,12 +22,12 @@ function SubmitButton() {
       {pending ? (
         <>
           <Bot className="mr-2 h-4 w-4 animate-spin" />
-          Generating...
+          Analyzing Data...
         </>
       ) : (
         <>
           <Lightbulb className="mr-2 h-4 w-4" />
-          Get Suggestions
+          Get Visualization Suggestions
         </>
       )}
     </Button>
@@ -63,7 +64,7 @@ export function AiVisualizationsForm() {
     } else if (state.message === "Suggestions generated successfully." && state.data) {
       toast({
         title: "Success!",
-        description: "AI suggestions have been generated.",
+        description: "AI visualization suggestions have been generated.",
       });
       // Optionally reset form: formRef.current?.reset(); // if you want to clear after success
     }
@@ -74,11 +75,11 @@ export function AiVisualizationsForm() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
-            <Bot className="h-6 w-6 text-primary" />
-            AI Chart Suggester
+            <FileText className="h-6 w-6 text-primary" />
+            Strategy Data Input
           </CardTitle>
           <CardDescription>
-            Paste your backtesting results or portfolio data below. Our AI will analyze it and suggest the most effective chart types for visualization, along with a rationale.
+            Paste your quantitative model's backtesting results, portfolio performance data, or any other structured financial data below. The AI will analyze it and suggest effective chart types.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,10 +87,10 @@ export function AiVisualizationsForm() {
             <div>
               <Textarea
                 name="backtestingResults"
-                placeholder="Example:&#10;Date,PortfolioValue,Benchmark&#10;2023-01-01,10000,9800&#10;2023-01-02,10150,9850&#10;..."
+                placeholder="Example:&#10;Strategy: AlphaMax, Date,NetProfit,MaxDrawdown,SharpeRatio&#10;Run1,2023-01-01,15030.25,-0.05,1.52&#10;Run1,2023-01-02,15105.50,-0.05,1.53&#10;..."
                 rows={10}
                 className="border-input focus:ring-primary"
-                aria-label="Backtesting Results Input"
+                aria-label="Quantitative Strategy Data Input"
               />
               {state.fields?.backtestingResults && (
                 <p className="mt-1 text-sm text-destructive">{state.fields.backtestingResults}</p>
@@ -105,7 +106,7 @@ export function AiVisualizationsForm() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <ListChecks className="h-6 w-6 text-primary" />
-              AI Suggestions
+              AI Visualization Suggestions
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
